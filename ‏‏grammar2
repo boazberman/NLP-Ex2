@@ -1,0 +1,131 @@
+# Symbols in the grammar are case-sensitive.
+# 
+# This grammar uses a convention that
+#    - terminals are lowercase          (president)
+#    - preterminals are capitalized     (Noun)
+#    - other nonterminals are all-caps  (NP)
+# 
+# This convention just makes grammars more readable to humans.  Thus:
+#
+#    - When *you* are writing grammars, you should 
+#      follow this convention unless you have a good reason not to.  
+#
+#    - But the  *program* should still work with grammars that don't
+#      follow this convention.  So how can the program reliably tell
+#      the difference between terminal and nonterminal symbols?  If
+#      there is at least one rule for rewriting a symbol, then that
+#      symbol is a nonterminal and should be rewritten.
+#######################
+
+# Rules for creating full sentences.
+
+10	ROOT	S .
+4	ROOT	S !
+1	ROOT	is it true that S ?     # mixing terminals and nonterminals is ok.
+
+# The basic grammar rules.  Here's what the abbreviations stand for:
+#    S  = sentence
+#    NP = noun phrase
+#    VP = verb phrase
+#    PP = prepositional phrase
+#    Det = determiner (sometimes called "article")
+#    Prep = preposition
+#    Adj = adjective
+#    VerbI = intransitive verb
+#    COMP = Complementizers
+#    CC = Coordinator
+#    Adv = Adverb
+#    AUX = auxiliary verb
+#    SBAR = subordinating conjunction
+
+1	S	NP VP
+
+# From (d) - "that ..." was generalized to allow another sentence to be concated to an existing sentence when a
+# complementized word is appearing
+1   SBAR    COMP S
+
+# From (c) - "sighted" was generalized to allow a verb phrase which is only an intransitive verb
+1   VP  VerbI
+1	VP	Verb NP
+# From (d) - "though that .." was generalied to allow a subordinating conjunction after a verb
+1   VP  Verb SBAR
+# From (e) - "perplexed NP that ..." was generalized to allow a NP to appear after a verb and before a subordinating
+# conjunction
+1   VP  Verb NP SBAR
+# From (g) - "worked PP" was generalized to allow a verb to appear before a prepositional phrase
+1   VP  Verb PP
+# From (h) - "is lazy" was generalized to allow using an adjective after a verb as a verb phrase
+1   VP  Verb Adj
+
+# From (b) - "wanted and ate" generalized to allow conjunction of multiple verbs
+1   Verb    Verb CC Verb
+
+3	NP	Det Noun
+1	NP	NP PP
+# From (a) - "Sally" was the whole NP
+3   NP  Noun
+# From (b) - "Sally and the president" when each side of the CC ("and" in this case) was an NP
+1   NP  NP CC NP
+
+1	PP	Prep NP
+1   PP  Prep S
+# From (g) - "on NP on NP" generalized to allow endless appending of prepositional phrase after a prepositional phrase
+1   PP  PP PP
+
+9	Noun	Adj Noun
+
+# From (f) - "very very very perplexed" was generalized to allow prepending endless amount of adverbs before an
+# adjective
+1   Adj Adv Adj
+
+# Vocabulary.  Your program can see that "ate" is a terminal
+# symbol because there exists no rule for rewriting it.
+# Any symbol that can rewrite as a terminal (or a string of
+# terminals, like "chief of staff") is called a "preterminal."  Notice
+# that a preterminal is a special kind of nonterminal.
+
+1	Verb	ate
+1	Verb	wanted
+1	Verb	kissed
+1	Verb	understood
+1	Verb	pickled
+1	Verb    perplexed
+1	Verb    worked
+1	Verb    is
+# From (i) - Was treated like a verb, because it cannot be separated dur to the fact that it is tense related (like
+# separating the ed suffix for past tenses)
+1   Verb    is eating
+1   Verb    thought
+
+2	Det	the
+2	Det	a
+1	Det	every
+
+1	Noun	president
+1	Noun	sandwich
+1	Noun	pickle
+1	Noun	chief of staff
+1	Noun	floor
+1   Noun    Sally
+1   Noun    it
+1   Noun    proposal
+1   Noun    desk
+
+1	Adj	fine
+1	Adj	delicious
+1	Adj	perplexed
+1	Adj	pickled
+1	Adj	lazy
+
+1   Adv very
+
+1   CC    and
+
+1	Prep	with
+1	Prep	on
+1	Prep	under
+1	Prep	in
+
+1   VerbI   sighted
+
+1   COMP    that

@@ -2,11 +2,12 @@
 
 Usage:
     generate.py GRAMMAR_FILE
-    generate.py GRAMMAR_FILE [-n LINES] [-s FILE_PATH]
+    generate.py GRAMMAR_FILE [-n LINES] [-s FILE_PATH] [-t | --tree]
 
 Options:
     -h --help    show this
     -n LINES --number=LINES  amount of lines to generate [default: 1]
+    -t --tree  generate tree structure with the sentence
     -s FILE_PATH --save=FILE_PATH the full path (including name) of the file to save the output to.
 
 '''
@@ -16,10 +17,6 @@ import random
 
 
 class PCFG(object):
-    '''
-    Yay docstring!@#!2!
-    '''
-
     def __init__(self):
         self._rules = defaultdict(list)
         self._sums = defaultdict(float)
@@ -46,15 +43,15 @@ class PCFG(object):
     def is_terminal(self, symbol):
         return symbol not in self._rules
 
-    def gen(self, symbol):
-        if self.is_terminal(symbol):
-            return symbol
-        else:
-            expansion = self.random_expansion(symbol)
-            return " ".join(self.gen(s) for s in expansion)
+    def expand(self, symbol, show_symbol):
+        return '(%s %s)' % (symbol, self.gen(symbol, show_symbol)) if show_symbol else self.gen(symbol, show_symbol)
 
-    def random_sent(self):
-        return self.gen("ROOT")
+    def gen(self, symbol, show_symbol):
+        return " ".join(s if self.is_terminal(s) else self.expand(s, show_symbol) for s in
+                        self.random_expansion(symbol))
+
+    def random_sent(self, show_symbol=False):
+        return self.expand("ROOT", show_symbol)
 
     def random_expansion(self, symbol):
         """
@@ -77,6 +74,6 @@ if __name__ == '__main__':
     arguments = docopt(__doc__)
     # print arguments
     pcfg = PCFG.from_file(arguments['GRAMMAR_FILE'])
-    sentences = '\n'.join(pcfg.random_sent() for i in xrange(int(arguments['--number'])))
+    sentences = '\n'.join(pcfg.random_sent(arguments['--tree']) for i in xrange(int(arguments['--number'])))
     print sentences
     save_to_file(arguments['--save'], sentences)

@@ -1,3 +1,14 @@
+######################
+# Part 4-
+#   (a) Support 'a' & 'an'
+#       How we did it: We divided the Adverbs, Adjectives and the Nouns each to two groups- One group for those starting
+#           with a constant sound, and another for those starting with a vowel sound. The decision upon whether it is a
+#           vowel case or a constant case is taken once only for the word most close to the 'a'/'an'.
+#   (f) Support tenses
+#       How we did it: We Splitted the Verb category which was included only teminals to be a category of multiple
+#           nonterminals where each tense recieved its own mapping. The nonterminals was then combined the constant
+#           terminals that each tense demand with the proper abbreviation of the verb for this tense.
+######################
 # Symbols in the grammar are case-sensitive.
 # 
 # This grammar uses a convention that
@@ -34,10 +45,53 @@
 
 1	S	NP VP
 1	VP	Verb NP
-1	NP	Det Noun
 1	NP	NP PP
 1	PP	Prep NP
-1	Noun	Adj Noun
+
+## Defining 'a' & 'an' (a)
+# All of this were dirived from:
+# 1 NP  Det Noun
+##
+1	NP	Det ANoun
+1	NP	Det AnNoun
+1	NP	a ANoun
+1	NP	an AnNoun
+
+1   ANoun   AAdj ANoun
+1   ANoun   AAdj AnNoun
+1   AnNoun  AnAdj ANoun
+1   AnNoun  AnAdj AnNoun
+
+1   AAdj    AAdv AAdj
+1   AAdj    AAdv AnAdj
+1   AnAdj   AnAdv AAdj
+1   AnAdj   AnAdv AnAdj
+
+## Defining Tenses in Verbs (f)
+# Present Simple
+1   Verb    VerbPr
+# Past Simple
+1   Verb    VerbPa
+# Future Simple
+1   Verb    will VerbPl
+# Present Perfect
+1   Verb    has VerbPe
+# Past Perfect
+1   Verb    had VerbPe
+# Future Perfect
+1   Verb    will have VerbPe
+# Present Progressive
+1   Verb    is VerbPg
+# Past Progressive
+1   Verb    was VerbPg
+# Future Progressive
+1   Verb    will be VerbPg
+# Present Perfect Progressive
+1   Verb    has been VerbPg
+# Past Perfect Progressive
+1   Verb    had been VerbPg
+# Future Perfect Progressive
+1   Verb    will have been VerbPg
 
 # Vocabulary.  Your program can see that "ate" is a terminal
 # symbol because there exists no rule for rewriting it.
@@ -45,26 +99,47 @@
 # terminals, like "chief of staff") is called a "preterminal."  Notice 
 # that a preterminal is a special kind of nonterminal.
 
-1	Verb	ate
-1	Verb	wanted
-1	Verb	kissed
-1	Verb	understood
-1	Verb	pickled
+## Verbs
+# Present
+1   VerbPr  eats
+# Plain
+1   VerbPl  eat
+# Past
+1   VerbPa  ate
+1	VerbPa	wanted
+1	VerbPa	kissed
+1	VerbPa	understood
+1	VerbPa	pickled
+# Perfect
+1   VerbPe  eaten
+1	VerbPe	wanted
+1	VerbPe	kissed
+1	VerbPe	understood
+1	VerbPe	pickled
+# Progressive
+1   VerbPg  eating
 
 1	Det	the
-1	Det	a
 1	Det	every
 
-1	Noun	president
-1	Noun	sandwich
-1	Noun	pickle
-1	Noun	chief of staff
-1	Noun	floor
+5	ANoun	president
+5	ANoun	sandwich
+5	ANoun	pickle
+5	ANoun	chief of staff
+5	ANoun	floor
 
-1	Adj	fine
-1	Adj	delicious
-1	Adj	perplexed
-1	Adj	pickled
+5   AnNoun  apple
+
+5	AAdj	fine
+5	AAdj	delicious
+5	AAdj	perplexed
+5	AAdj	pickled
+
+5   AnAdj   ambivalent
+
+5   AAdv    very
+
+5   AnAdv   efficiently
 
 1	Prep	with
 1	Prep	on

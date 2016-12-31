@@ -1,3 +1,16 @@
+#######################
+# Part 5-
+#   * Support 'Embedding'. Support sentences such as: 'The rat the cat the dog bit chased escaped.' (found in Wikipedia's
+#       List_of_linguistic_example_sentences).
+#       The way we parsed it: (ROOT (S (SE(NP ((Det the) (Noun rat)) SE (NP ((Det the) (Noun cat)) SE (NP ((Det the)
+#       (Noun dog)) (Verb bit)) (Verb chased)) (Verb escaped))) .))
+#   * Support the sentence: 'He was a lazy sort, who would avoid a difficult task and fill his working hours with easy
+#        ones.' found in Wikipedia, Adjective#Order).
+#        The way we parsed it: (ROOT (S (SC (S ((PrN He) VP ((Verb was) NP ((Det a) Noun((Adj lazy) (Noun sor)))))) ,
+#            S2((WH who) VP (VP ((Verb would avoid) NP ((Det a) Noun ((Adj difficult) (Noun task)))) (CON and) VP
+#            ((Verb fill) NP (NP ((PrN$ his) (Noun working hours)) PP ((Prep with) NP (NounS((Adj easy) (NounS
+#            ones))))))))) .))
+#######################
 # Symbols in the grammar are case-sensitive.
 # 
 # This grammar uses a convention that
@@ -19,7 +32,7 @@
 
 # Rules for creating full sentences.
 
-1	ROOT	S .
+5	ROOT	S .
 1	ROOT	S !
 1	ROOT	is it true that S ?     # mixing terminals and nonterminals is ok.
 
@@ -32,12 +45,36 @@
 #    Prep = preposition
 #    Adj = adjective
 
-1	S	NP VP
-1	VP	Verb NP
-1	NP	Det Noun
-1	NP	NP PP
+1   S   SS
+1   S   SE
+1   S   SC
+
+# Simple Sentence (SS) - The original S
+1	SS	NP VP
+# Embedded Sentance (SE) - Created to support the embedding phenomenon (described briefly at the top)
+3   SE  NP Verb
+1   SE  NP SE Verb
+# Complex Sentence (SC) - Meant to allow the dividing of sentences (second sentence)
+1   SC   S , S2
+
+1   S2  WH VP
+
+6	VP	Verb NP
+# Added to support: "...task and fill..."
+1   VP  VP CON VP
+
+5	NP	Det Noun
+# Added to support "...easy ones" where ones is a noun that is allowed to exist without a Det. Similar handling is
+# required for names and so.
+1   NP  NounS
+1   NP  PrN
+1   NP  PrN$ Noun
+2	NP	NP PP
 1	PP	Prep NP
-1	Noun	Adj Noun
+5	Noun	Adj Noun
+
+# Added to support "...easy ones" where easy is required
+1   NounS   Adj NounS
 
 # Vocabulary.  Your program can see that "ate" is a terminal
 # symbol because there exists no rule for rewriting it.
@@ -50,6 +87,12 @@
 1	Verb	kissed
 1	Verb	understood
 1	Verb	pickled
+1	Verb	chased
+1	Verb	escaped
+1   Verb    was
+1   Verb    would avoid
+1   Verb    fill
+1   Verb    bit
 
 1	Det	the
 1	Det	a
@@ -60,11 +103,30 @@
 1	Noun	pickle
 1	Noun	chief of staff
 1	Noun	floor
+1   Noun    rat
+1   Noun    cat
+1   Noun    dog
+1   Noun    sort
+1   Noun    task
+1   Noun    working hours
+
+1   NounS   ones
+
+1   PrN he
+
+1   PrN$    his
+
+1   WH  who
+
+1   CON and
 
 1	Adj	fine
 1	Adj	delicious
 1	Adj	perplexed
 1	Adj	pickled
+1   Adj lazy
+1   Adj difficult
+1   Adj easy
 
 1	Prep	with
 1	Prep	on
